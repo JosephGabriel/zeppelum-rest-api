@@ -13,7 +13,7 @@ export class UsersService {
     @InjectRepository(UserEntity) private repo: Repository<UserEntity>,
   ) {}
 
-  async findOne(email: string) {
+  findOne(email: string) {
     return this.repo.findOne({ where: { email } });
   }
 

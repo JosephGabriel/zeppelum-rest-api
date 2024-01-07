@@ -2,15 +2,20 @@ import {
   BadRequestException,
   Body,
   Controller,
+  HttpCode,
+  HttpStatus,
+  NotFoundException,
   Post,
+  UnauthorizedException,
   ValidationPipe,
 } from '@nestjs/common';
 
-import { hash } from 'bcrypt';
+import { compare, hash } from 'bcrypt';
 
 import { UsersService } from './users.service';
 
 import { CreateUserDto } from './dtos/create-user.dto';
+import { LoginUserDto } from './dtos/login-user.dto';
 
 @Controller('auth')
 export class UsersController {
@@ -35,6 +40,24 @@ export class UsersController {
     delete args.passwordConfirm;
 
     const user = await this.usersService.create(args);
+
+    return user;
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Post('signin')
+  async loginUser(@Body() body: LoginUserDto) {
+    const user = await this.usersService.findOne(body.email);
+
+    if (!user) {
+      throw new NotFoundException('email or password wrong');
+    }
+
+    const isCorrect = await compare(body.password, user.password);
+
+    if (!isCorrect) {
+      throw new UnauthorizedException('email or password wrong');
+    }
 
     return user;
   }

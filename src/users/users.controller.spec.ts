@@ -1,5 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { BadRequestException, Provider } from '@nestjs/common';
+import {
+  BadRequestException,
+  Provider,
+  UnauthorizedException,
+} from '@nestjs/common';
+import { hashSync } from 'bcrypt';
 
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
@@ -18,7 +23,7 @@ const userMock = {
   email: 'email@email.com',
   lastname: 'lastname',
   name: 'name',
-  password: 'password',
+  password: hashSync(args.password, 1),
 };
 
 describe('UsersController', () => {
@@ -74,6 +79,47 @@ describe('UsersController', () => {
         await controller.createUser(newArgs);
       } catch (error) {
         expect(error.message).toBe('passwords must be equals');
+        expect(error).toBeInstanceOf(BadRequestException);
+      }
+    });
+  });
+
+  describe('/signin', () => {
+    it('should login a user', async () => {
+      usersServiceMock.findOne.mockReturnValue(userMock);
+
+      const user = await controller.loginUser({
+        email: userMock.email,
+        password: args.password,
+      });
+
+      expect(user).not.toBeFalsy();
+    });
+
+    it('should throw error when tries to login with wrong email', async () => {
+      usersServiceMock.findOne.mockReturnValue(null);
+
+      try {
+        await controller.loginUser({
+          email: userMock.email,
+          password: userMock.password,
+        });
+      } catch (error) {
+        expect(error.message).toBe('email or password wrong');
+        expect(error).toBeInstanceOf(UnauthorizedException);
+      }
+    });
+
+    it('should throw error when passwords dont match', async () => {
+      usersServiceMock.findOne.mockReturnValue(userMock);
+
+      try {
+        await controller.loginUser({
+          email: userMock.email,
+          password: 'cdccr',
+        });
+      } catch (error) {
+        expect(error.message).toBe('email or password wrong');
         expect(error).toBeInstanceOf(BadRequestException);
       }
     });
