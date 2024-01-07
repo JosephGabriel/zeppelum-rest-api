@@ -46,7 +46,7 @@ export class UsersController {
 
   @HttpCode(HttpStatus.OK)
   @Post('signin')
-  async loginUser(@Body() body: LoginUserDto) {
+  async loginUser(@Body(new ValidationPipe()) body: LoginUserDto) {
     const user = await this.usersService.findOne(body.email);
 
     if (!user) {
