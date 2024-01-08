@@ -1,14 +1,22 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
+import { hashSync } from 'bcrypt';
+
 import {
   BadRequestException,
-  Provider,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { hashSync } from 'bcrypt';
 
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dtos/create-user.dto';
+
+jest.mock('@nestjs/jwt');
+jest.mock('@nestjs/config');
+
+jest.mock('./users.service');
 
 const args = {
   email: 'email@email.com',
@@ -26,23 +34,26 @@ const userMock = {
   password: hashSync(args.password, 1),
 };
 
+const JwtServiceMock = JwtService as jest.Mock<JwtService>;
+const ConfigServiceMock = ConfigService as jest.Mock<ConfigService>;
+const UsersServiceMock = UsersService as jest.Mock<UsersService>;
+
 describe('UsersController', () => {
   let controller: UsersController;
 
-  const usersServiceMock = {
-    findOne: jest.fn(),
-    create: jest.fn(),
-  };
+  const jwtServiceMock = new JwtServiceMock() as jest.Mocked<JwtService>;
+  const configServiceMock =
+    new ConfigServiceMock() as jest.Mocked<ConfigService>;
+  const usersServiceMock = new UsersServiceMock() as jest.Mocked<UsersService>;
 
   beforeEach(async () => {
-    const usersService: Provider = {
-      provide: UsersService,
-      useValue: usersServiceMock,
-    };
-
     const module: TestingModule = await Test.createTestingModule({
       controllers: [UsersController],
-      providers: [usersService],
+      providers: [
+        { provide: UsersService, useValue: usersServiceMock },
+        { provide: JwtService, useValue: jwtServiceMock },
+        { provide: ConfigService, useValue: configServiceMock },
+      ],
     }).compile();
 
     controller = module.get<UsersController>(UsersController);
@@ -57,7 +68,7 @@ describe('UsersController', () => {
   describe('/signup', () => {
     it('should create a user', async () => {
       usersServiceMock.findOne.mockReturnValue(null);
-      usersServiceMock.create.mockReturnValue(userMock);
+      usersServiceMock.create.mockReturnValue(Promise.resolve(userMock));
 
       const user = await controller.createUser(args);
 
@@ -65,7 +76,7 @@ describe('UsersController', () => {
     });
 
     it('should throw error when tries to user existing email', async () => {
-      usersServiceMock.findOne.mockReturnValue(userMock);
+      usersServiceMock.findOne.mockReturnValue(Promise.resolve(userMock));
 
       await expect(controller.createUser(args)).rejects.toThrow(
         BadRequestException,
@@ -86,14 +97,19 @@ describe('UsersController', () => {
 
   describe('/signin', () => {
     it('should login a user', async () => {
-      usersServiceMock.findOne.mockReturnValue(userMock);
+      usersServiceMock.findOne.mockReturnValue(Promise.resolve(userMock));
+
+      configServiceMock.get.mockReturnValue('mock');
+
+      jwtServiceMock.signAsync.mockReturnValue(Promise.resolve('kmkmk'));
 
       const user = await controller.loginUser({
         email: userMock.email,
         password: args.password,
       });
 
-      expect(user).not.toBeFalsy();
+      expect(user.user).not.toBeFalsy();
+      expect(user.token).not.toBeFalsy();
     });
 
     it('should throw error when tries to login with wrong email', async () => {
@@ -106,12 +122,12 @@ describe('UsersController', () => {
         });
       } catch (error) {
         expect(error.message).toBe('email or password wrong');
-        expect(error).toBeInstanceOf(UnauthorizedException);
+        expect(error).toBeInstanceOf(NotFoundException);
       }
     });
 
     it('should throw error when passwords dont match', async () => {
-      usersServiceMock.findOne.mockReturnValue(userMock);
+      usersServiceMock.findOne.mockReturnValue(Promise.resolve(userMock));
 
       try {
         await controller.loginUser({
@@ -120,7 +136,7 @@ describe('UsersController', () => {
         });
       } catch (error) {
         expect(error.message).toBe('email or password wrong');
-        expect(error).toBeInstanceOf(BadRequestException);
+        expect(error).toBeInstanceOf(UnauthorizedException);
       }
     });
   });

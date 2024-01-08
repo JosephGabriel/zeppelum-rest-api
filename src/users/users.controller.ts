@@ -16,10 +16,16 @@ import { UsersService } from './users.service';
 
 import { CreateUserDto } from './dtos/create-user.dto';
 import { LoginUserDto } from './dtos/login-user.dto';
+import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
 
 @Controller('auth')
 export class UsersController {
-  constructor(private usersService: UsersService) {}
+  constructor(
+    private usersService: UsersService,
+    private jwtService: JwtService,
+    private configService: ConfigService,
+  ) {}
 
   @Post('signup')
   async createUser(@Body(new ValidationPipe()) body: CreateUserDto) {
@@ -59,6 +65,18 @@ export class UsersController {
       throw new UnauthorizedException('email or password wrong');
     }
 
-    return user;
+    const token = await this.jwtService.signAsync(
+      { id: user.id },
+      {
+        secret: this.configService.get<string>('JWT_SECRET'),
+      },
+    );
+
+    console.log(token);
+
+    return {
+      user,
+      token,
+    };
   }
 }

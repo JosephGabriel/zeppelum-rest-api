@@ -53,7 +53,8 @@ describe('Auth Controller', () => {
         .send(loginArgs)
         .expect(200)
         .expect((res) => {
-          expect(res.body.email).toBe(loginArgs.email);
+          expect(res.body.user.email).toBe(loginArgs.email);
+          expect(res.body.token).not.toBeFalsy();
         });
     });
 
