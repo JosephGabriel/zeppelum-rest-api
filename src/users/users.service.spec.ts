@@ -24,7 +24,7 @@ describe('UsersService', () => {
     findOne: jest.fn(),
   };
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const TypeormRepository: Provider = {
       provide: getRepositoryToken(UserEntity),
       useValue: userMockRepository,
@@ -34,9 +34,11 @@ describe('UsersService', () => {
       providers: [UsersService, TypeormRepository],
     }).compile();
 
-    jest.resetAllMocks();
-
     service = module.get<UsersService>(UsersService);
+  });
+
+  beforeAll(() => {
+    jest.resetAllMocks();
   });
 
   it('should be defined', () => {

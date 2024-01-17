@@ -9,16 +9,17 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 
-import { UsersController } from './users.controller';
-import { UsersService } from './users.service';
-import { CreateUserDto } from './dtos/create-user.dto';
+import { UsersService } from '../users/users.service';
+import { CreateUserDto } from '../users/dtos/create-user.dto';
+import { UserEntity } from '../users/users.entity';
+import { AuthController } from './auth.controller';
 
 jest.mock('@nestjs/jwt');
 jest.mock('@nestjs/config');
 
-jest.mock('./users.service');
+jest.mock('../users/users.service');
 
-const args = {
+const args: CreateUserDto = {
   email: 'email@email.com',
   lastname: 'lastname',
   name: 'name',
@@ -26,7 +27,7 @@ const args = {
   passwordConfirm: 'password',
 };
 
-const userMock = {
+const userMock: UserEntity = {
   id: 'eee',
   email: 'email@email.com',
   lastname: 'lastname',
@@ -38,17 +39,18 @@ const JwtServiceMock = JwtService as jest.Mock<JwtService>;
 const ConfigServiceMock = ConfigService as jest.Mock<ConfigService>;
 const UsersServiceMock = UsersService as jest.Mock<UsersService>;
 
-describe('UsersController', () => {
-  let controller: UsersController;
+describe('AuthController', () => {
+  let controller: AuthController;
 
   const jwtServiceMock = new JwtServiceMock() as jest.Mocked<JwtService>;
-  const configServiceMock =
-    new ConfigServiceMock() as jest.Mocked<ConfigService>;
   const usersServiceMock = new UsersServiceMock() as jest.Mocked<UsersService>;
 
-  beforeEach(async () => {
+  const configServiceMock =
+    new ConfigServiceMock() as jest.Mocked<ConfigService>;
+
+  beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      controllers: [UsersController],
+      controllers: [AuthController],
       providers: [
         { provide: UsersService, useValue: usersServiceMock },
         { provide: JwtService, useValue: jwtServiceMock },
@@ -56,8 +58,10 @@ describe('UsersController', () => {
       ],
     }).compile();
 
-    controller = module.get<UsersController>(UsersController);
+    controller = module.get<AuthController>(AuthController);
+  });
 
+  beforeEach(() => {
     jest.resetAllMocks();
   });
 

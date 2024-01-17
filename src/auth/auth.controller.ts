@@ -1,3 +1,6 @@
+import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
+
 import {
   BadRequestException,
   Body,
@@ -12,23 +15,27 @@ import {
 
 import { compare, hash } from 'bcrypt';
 
-import { UsersService } from './users.service';
+import { UsersService } from '../users/users.service';
 
-import { CreateUserDto } from './dtos/create-user.dto';
-import { LoginUserDto } from './dtos/login-user.dto';
-import { JwtService } from '@nestjs/jwt';
-import { ConfigService } from '@nestjs/config';
+import { CreateUserDto } from '../users/dtos/create-user.dto';
+import { LoginUserDto } from '../users/dtos/login-user.dto';
+
+import { AuthPayload } from './dtos/auth-payload.dto';
+import { Serialize } from '../interceptors/serialize.interceptor';
 
 @Controller('auth')
-export class UsersController {
+export class AuthController {
   constructor(
     private usersService: UsersService,
     private jwtService: JwtService,
     private configService: ConfigService,
   ) {}
 
+  @Serialize(AuthPayload)
   @Post('signup')
-  async createUser(@Body(new ValidationPipe()) body: CreateUserDto) {
+  async createUser(
+    @Body(new ValidationPipe()) body: CreateUserDto,
+  ): Promise<AuthPayload> {
     const hasUser = await this.usersService.findOne(body.email);
 
     if (hasUser) {
@@ -41,18 +48,32 @@ export class UsersController {
 
     const hashedPassword = await hash(body.password, 10);
 
-    const args: CreateUserDto = { ...body, password: hashedPassword };
+    const user = await this.usersService.create({
+      email: body.email,
+      name: body.name,
+      lastname: body.lastname,
+      password: hashedPassword,
+    });
 
-    delete args.passwordConfirm;
+    const token = await this.jwtService.signAsync(
+      { id: user.id },
+      {
+        secret: this.configService.get<string>('JWT_SECRET'),
+      },
+    );
 
-    const user = await this.usersService.create(args);
-
-    return user;
+    return {
+      user,
+      token,
+    };
   }
 
   @HttpCode(HttpStatus.OK)
   @Post('signin')
-  async loginUser(@Body(new ValidationPipe()) body: LoginUserDto) {
+  @Serialize(AuthPayload)
+  async loginUser(
+    @Body(new ValidationPipe()) body: LoginUserDto,
+  ): Promise<AuthPayload> {
     const user = await this.usersService.findOne(body.email);
 
     if (!user) {
@@ -71,8 +92,6 @@ export class UsersController {
         secret: this.configService.get<string>('JWT_SECRET'),
       },
     );
-
-    console.log(token);
 
     return {
       user,
