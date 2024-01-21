@@ -1,6 +1,4 @@
-import { IsDate, IsEnum, IsNumber, IsString } from 'class-validator';
-
-import { EventType } from '../events.entity';
+import { IsDate, IsNumber, IsString } from 'class-validator';
 
 export class CreateEventDto {
   @IsString()
@@ -12,8 +10,8 @@ export class CreateEventDto {
   @IsNumber()
   price: number;
 
-  @IsEnum(EventType)
-  type: EventType;
+  @IsString()
+  type: string;
 
   @IsDate()
   dateStart: Date;
