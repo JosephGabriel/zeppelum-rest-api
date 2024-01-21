@@ -9,6 +9,9 @@ export class UserPayload {
 
   @Expose()
   lastname: string;
+
+  @Expose()
+  email: string;
 }
 
 export class AuthPayload {

@@ -13,11 +13,8 @@ const args = {
 };
 
 const loginArgs = {
-  name: 'josé',
-  lastname: 'gabriel',
   email: 'email1@email.com',
   password: 'password',
-  passwordConfirm: 'password',
 };
 
 describe('Auth Controller', () => {
@@ -37,7 +34,45 @@ describe('Auth Controller', () => {
       return request(app.getHttpServer())
         .post('/auth/signup')
         .send(args)
-        .expect(201);
+        .expect(201)
+        .then((res) => {
+          expect(res.body.token).not.toBeFalsy();
+          expect(res.body.user.name).toEqual(args.name);
+        });
+    });
+
+    it('should not create user when has existing email', async () => {
+      await request(app.getHttpServer())
+        .post('/auth/signup')
+        .send(args)
+        .expect(201)
+        .then((res) => {
+          expect(res.body.token).not.toBeFalsy();
+          expect(res.body.user.name).toEqual(args.name);
+        });
+
+      return request(app.getHttpServer())
+        .post('/auth/signup')
+        .send(args)
+        .expect(400)
+        .then((res) => {
+          expect(res.body.message).toEqual('email in use');
+        });
+    });
+
+    it("should not create user when passwords don't match", async () => {
+      const input: typeof args = {
+        ...args,
+        passwordConfirm: 'crccrxxed',
+      };
+
+      return request(app.getHttpServer())
+        .post('/auth/signup')
+        .send(input)
+        .expect(400)
+        .then((res) => {
+          expect(res.body.message).toEqual('passwords must be equals');
+        });
     });
   });
 
@@ -59,9 +94,14 @@ describe('Auth Controller', () => {
     });
 
     it('should not login with invalid email', async () => {
+      const input: typeof loginArgs = {
+        email: args.email,
+        password: 'ocokrcok',
+      };
+
       const response = await request(app.getHttpServer())
         .post('/auth/signin')
-        .send({ email: args.email, password: 'ocokrcok' })
+        .send(input)
         .expect(404);
 
       expect(response.body.message).toBe('email or password wrong');

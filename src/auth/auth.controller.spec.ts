@@ -76,7 +76,8 @@ describe('AuthController', () => {
 
       const user = await controller.createUser(args);
 
-      expect(user).not.toBeFalsy();
+      expect(user.user).not.toBeFalsy();
+      expect(user.token).not.toBeFalsy();
     });
 
     it('should throw error when tries to user existing email', async () => {
