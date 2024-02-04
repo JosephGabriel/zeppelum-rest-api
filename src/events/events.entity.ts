@@ -1,13 +1,10 @@
 import {
-  BeforeInsert,
   Column,
   CreateDateColumn,
   Entity,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-
-import { faker } from '@faker-js/faker';
 
 export enum EventType {
   ONLINE = 'Online',
@@ -24,6 +21,9 @@ export class EventEntity {
 
   @Column()
   title: string;
+
+  @Column()
+  shortDescription: string;
 
   @Column()
   description: string;
@@ -52,9 +52,4 @@ export class EventEntity {
 
   @UpdateDateColumn()
   updatedAt: Date;
-
-  @BeforeInsert()
-  createRandonImage() {
-    this.image = faker.image.urlLoremFlickr();
-  }
 }

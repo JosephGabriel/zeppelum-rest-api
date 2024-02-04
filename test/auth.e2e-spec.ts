@@ -23,7 +23,7 @@ const loginArgs: LoginUserDto = {
 describe('Auth Controller', () => {
   let app: INestApplication;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();

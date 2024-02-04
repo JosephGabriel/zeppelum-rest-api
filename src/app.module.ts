@@ -1,9 +1,12 @@
 import { Module } from '@nestjs/common';
-import { UsersModule } from './users/users.module';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { UserEntity } from './users/users.entity';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
+
+import { UsersModule } from './users/users.module';
+import { UserEntity } from './users/users.entity';
+
 import { AuthModule } from './auth/auth.module';
+
 import { EventsModule } from './events/events.module';
 import { EventEntity } from './events/events.entity';
 

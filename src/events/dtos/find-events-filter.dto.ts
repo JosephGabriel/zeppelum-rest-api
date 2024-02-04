@@ -2,7 +2,7 @@ import { IsDate, IsEnum, IsNumber, IsString, Max, Min } from 'class-validator';
 
 import { EventType } from '../events.entity';
 
-export class FindEventsFilterArgs {
+export class FindEventsFilterDto {
   @IsString()
   title: string;
 
