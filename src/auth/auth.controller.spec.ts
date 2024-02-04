@@ -73,6 +73,7 @@ describe('AuthController', () => {
     it('should create a user', async () => {
       usersServiceMock.findOne.mockReturnValue(null);
       usersServiceMock.create.mockReturnValue(Promise.resolve(userMock));
+      jwtServiceMock.signAsync.mockReturnValue(Promise.resolve('okok'));
 
       const user = await controller.createUser(args);
 
