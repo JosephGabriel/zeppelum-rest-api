@@ -4,7 +4,10 @@ import * as request from 'supertest';
 
 import { AppModule } from './../src/app.module';
 
-const args = {
+import { CreateUserDto } from '../src/users/dtos/create-user.dto';
+import { LoginUserDto } from '../src/users/dtos/login-user.dto';
+
+const args: CreateUserDto = {
   name: 'josé',
   lastname: 'gabriel',
   email: 'email1@email.com',
@@ -12,7 +15,7 @@ const args = {
   passwordConfirm: 'password',
 };
 
-const loginArgs = {
+const loginArgs: LoginUserDto = {
   email: 'email1@email.com',
   password: 'password',
 };
