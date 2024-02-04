@@ -11,11 +11,14 @@ import {
 import { CreateEventDto } from './dtos/create-events.dto';
 
 import { EventsService } from './events.service';
+import { Serialize } from '../interceptors/serialize.interceptor';
+import { FindAllEventsDto } from './dtos/find-all-event-response.dto';
 
 @Controller('events')
 export class EventsController {
   constructor(private eventsService: EventsService) {}
 
+  @Serialize(FindAllEventsDto)
   @Get()
   findAllEvents() {
     return this.eventsService.findAll();
