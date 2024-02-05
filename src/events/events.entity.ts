@@ -2,9 +2,12 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+
+import { Category } from '../categories/entities/category.entity';
 
 export enum EventType {
   ONLINE = 'Online',
@@ -27,6 +30,9 @@ export class EventEntity {
 
   @Column()
   description: string;
+
+  @ManyToOne(() => Category, (category) => category.events)
+  category: Category;
 
   @Column({
     default: 0,

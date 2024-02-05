@@ -9,6 +9,7 @@ import { AuthModule } from './auth/auth.module';
 
 import { EventsModule } from './events/events.module';
 import { EventEntity } from './events/events.entity';
+import { CategoriesModule } from './categories/categories.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { EventEntity } from './events/events.entity';
     UsersModule,
     AuthModule,
     EventsModule,
+    CategoriesModule,
   ],
   controllers: [],
   providers: [],
