@@ -3,7 +3,7 @@ import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 
 import { AppModule } from '../src/app.module';
-import { CreateEventDto } from '../src/events/dtos/create-events.dto';
+import { CreateEventDto } from '../src/events/dto/create-events.dto';
 
 const createEventArgs: CreateEventDto = {
   title: 'Kihn, Lakin and King',

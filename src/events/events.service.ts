@@ -2,15 +2,13 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, Repository } from 'typeorm';
 
-import { EventEntity } from './events.entity';
+import { Event } from './entities/events.entity';
 
-import { CreateEventDto } from './dtos/create-events.dto';
+import { CreateEventDto } from './dto/create-events.dto';
 
 @Injectable()
 export class EventsService {
-  constructor(
-    @InjectRepository(EventEntity) private repo: Repository<EventEntity>,
-  ) {}
+  constructor(@InjectRepository(Event) private repo: Repository<Event>) {}
 
   async create(data: CreateEventDto): Promise<CreateEventDto> {
     const event = await this.repo.create(data);
@@ -18,7 +16,7 @@ export class EventsService {
     return this.repo.save(event);
   }
 
-  async findOne(id: string): Promise<EventEntity> {
+  async findOne(id: string): Promise<Event> {
     const event = await this.repo.findOne({
       where: {
         id,
@@ -32,7 +30,7 @@ export class EventsService {
     return event;
   }
 
-  findAll(): Promise<EventEntity[]> {
+  findAll(): Promise<Event[]> {
     return this.repo.find();
   }
 

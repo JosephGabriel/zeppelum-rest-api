@@ -17,8 +17,8 @@ import { compare, hash } from 'bcrypt';
 
 import { UsersService } from '../users/users.service';
 
-import { CreateUserDto } from '../users/dtos/create-user.dto';
-import { LoginUserDto } from '../users/dtos/login-user.dto';
+import { CreateUserDto } from '../users/dto/create-user.dto';
+import { LoginUserDto } from '../users/dto/login-user.dto';
 
 import { AuthPayload } from './dtos/auth-payload.dto';
 import { Serialize } from '../interceptors/serialize.interceptor';

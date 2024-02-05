@@ -5,9 +5,9 @@ import { Provider } from '@nestjs/common';
 import { hashSync } from 'bcrypt';
 
 import { UsersService } from './users.service';
-import { UserEntity } from './users.entity';
+import { User } from './entities/users.entity';
 
-const userInstance: UserEntity = {
+const userInstance: User = {
   id: '1',
   email: 'email@email.com',
   name: 'John',
@@ -26,7 +26,7 @@ describe('UsersService', () => {
 
   beforeAll(async () => {
     const TypeormRepository: Provider = {
-      provide: getRepositoryToken(UserEntity),
+      provide: getRepositoryToken(User),
       useValue: userMockRepository,
     };
 

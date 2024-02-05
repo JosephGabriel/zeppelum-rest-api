@@ -2,17 +2,15 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-import { UserEntity } from './users.entity';
+import { User } from './entities/users.entity';
 
-import { CreateUserDto } from './dtos/create-user.dto';
+import { CreateUserDto } from './dto/create-user.dto';
 
 type CreateUserData = Required<Omit<CreateUserDto, 'passwordConfirm'>>;
 
 @Injectable()
 export class UsersService {
-  constructor(
-    @InjectRepository(UserEntity) private repo: Repository<UserEntity>,
-  ) {}
+  constructor(@InjectRepository(User) private repo: Repository<User>) {}
 
   findOne(email: string) {
     return this.repo.findOne({ where: { email } });

@@ -1,6 +1,6 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
-import { EventEntity } from '../../events/events.entity';
+import { Event } from '../../events/entities/events.entity';
 
 @Entity()
 export class Category {
@@ -10,6 +10,6 @@ export class Category {
   @Column()
   name: string;
 
-  @OneToMany(() => EventEntity, (event) => event.category)
-  events: EventEntity[];
+  @OneToMany(() => Event, (event) => event.category)
+  events: Event[];
 }

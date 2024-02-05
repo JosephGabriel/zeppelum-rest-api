@@ -4,8 +4,8 @@ import * as request from 'supertest';
 
 import { AppModule } from './../src/app.module';
 
-import { CreateUserDto } from '../src/users/dtos/create-user.dto';
-import { LoginUserDto } from '../src/users/dtos/login-user.dto';
+import { CreateUserDto } from '../src/users/dto/create-user.dto';
+import { LoginUserDto } from '../src/users/dto/login-user.dto';
 
 const args: CreateUserDto = {
   name: 'josé',

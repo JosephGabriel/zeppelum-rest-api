@@ -7,7 +7,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { Category } from '../categories/entities/category.entity';
+import { Category } from '../../categories/entities/category.entity';
 
 export enum EventType {
   ONLINE = 'Online',
@@ -15,7 +15,7 @@ export enum EventType {
 }
 
 @Entity()
-export class EventEntity {
+export class Event {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

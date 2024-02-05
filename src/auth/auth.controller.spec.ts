@@ -10,8 +10,8 @@ import {
 } from '@nestjs/common';
 
 import { UsersService } from '../users/users.service';
-import { CreateUserDto } from '../users/dtos/create-user.dto';
-import { UserEntity } from '../users/users.entity';
+import { CreateUserDto } from '../users/dto/create-user.dto';
+import { User } from '../users/entities/users.entity';
 import { AuthController } from './auth.controller';
 
 jest.mock('@nestjs/jwt');
@@ -27,7 +27,7 @@ const args: CreateUserDto = {
   passwordConfirm: 'password',
 };
 
-const userMock: UserEntity = {
+const userMock: User = {
   id: 'eee',
   email: 'email@email.com',
   lastname: 'lastname',

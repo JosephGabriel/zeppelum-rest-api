@@ -3,13 +3,15 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { UsersModule } from './users/users.module';
-import { UserEntity } from './users/users.entity';
+import { User } from './users/entities/users.entity';
 
 import { AuthModule } from './auth/auth.module';
 
 import { EventsModule } from './events/events.module';
-import { EventEntity } from './events/events.entity';
+import { Event } from './events/entities/events.entity';
+
 import { CategoriesModule } from './categories/categories.module';
+import { Category } from './categories/entities/category.entity';
 
 @Module({
   imports: [
@@ -23,7 +25,7 @@ import { CategoriesModule } from './categories/categories.module';
         type: 'sqlite',
         database: config.get<string>('DATABASE_NAME'),
         synchronize: true,
-        entities: [UserEntity, EventEntity],
+        entities: [User, Event, Category],
       }),
     }),
     UsersModule,

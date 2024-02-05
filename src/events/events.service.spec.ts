@@ -5,16 +5,16 @@ import { Repository } from 'typeorm';
 
 import { EventsService } from './events.service';
 
-import { EventEntity } from './events.entity';
+import { Event } from './entities/events.entity';
 
 const eventMockRepo = {
   create: jest.fn(),
   findOne: jest.fn(),
   find: jest.fn(),
   delete: jest.fn(),
-} as unknown as jest.Mocked<Repository<EventEntity>>;
+} as unknown as jest.Mocked<Repository<Event>>;
 
-const eventMock: EventEntity = {
+const eventMock: Event = {
   id: 'sde',
   createdAt: new Date(),
   updatedAt: new Date(),
@@ -34,7 +34,7 @@ describe('EventsService', () => {
 
   beforeAll(async () => {
     const TypeormRepository: Provider = {
-      provide: getRepositoryToken(EventEntity),
+      provide: getRepositoryToken(Event),
       useValue: eventMockRepo,
     };
 

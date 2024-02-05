@@ -3,13 +3,13 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { EventsController } from './events.controller';
 
 import { EventsService } from './events.service';
-import { EventEntity } from './events.entity';
+import { Event } from './entities/events.entity';
 
 jest.mock('./events.service');
 
 const EventsServiceMock = EventsService as jest.Mock<EventsService>;
 
-export const eventMock: EventEntity = {
+export const eventMock: Event = {
   id: '1',
   image: 'example.jpg',
   title: 'Exemplo de Evento',
