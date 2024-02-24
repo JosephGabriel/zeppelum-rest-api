@@ -16,6 +16,10 @@ export class UsersService {
     return this.repo.findOne({ where: { email } });
   }
 
+  findById(id: string) {
+    return this.repo.findOne({ where: { id } });
+  }
+
   create(body: CreateUserData) {
     const user = this.repo.create(body);
 

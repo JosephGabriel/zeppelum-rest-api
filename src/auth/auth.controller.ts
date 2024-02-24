@@ -10,7 +10,6 @@ import {
   NotFoundException,
   Post,
   UnauthorizedException,
-  ValidationPipe,
 } from '@nestjs/common';
 
 import { compare, hash } from 'bcrypt';
@@ -21,6 +20,7 @@ import { CreateUserDto } from '../users/dto/create-user.dto';
 import { LoginUserDto } from '../users/dto/login-user.dto';
 
 import { AuthPayload } from './dtos/auth-payload.dto';
+
 import { Serialize } from '../interceptors/serialize.interceptor';
 
 @Controller('auth')
@@ -33,9 +33,7 @@ export class AuthController {
 
   @Serialize(AuthPayload)
   @Post('signup')
-  async createUser(
-    @Body(new ValidationPipe()) body: CreateUserDto,
-  ): Promise<AuthPayload> {
+  async createUser(@Body() body: CreateUserDto): Promise<AuthPayload> {
     const hasUser = await this.usersService.findOne(body.email);
 
     if (hasUser) {
@@ -71,9 +69,7 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @Post('signin')
   @Serialize(AuthPayload)
-  async loginUser(
-    @Body(new ValidationPipe()) body: LoginUserDto,
-  ): Promise<AuthPayload> {
+  async loginUser(@Body() body: LoginUserDto): Promise<AuthPayload> {
     const user = await this.usersService.findOne(body.email);
 
     if (!user) {

@@ -12,6 +12,8 @@ const userInstance: User = {
   email: 'email@email.com',
   name: 'John',
   lastname: 'Doe',
+  role: 'Admin',
+  events: [],
   password: hashSync('password', 1),
 };
 

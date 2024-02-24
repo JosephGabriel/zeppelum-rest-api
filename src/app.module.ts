@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { UsersModule } from './users/users.module';
 import { User } from './users/entities/users.entity';
 
 import { AuthModule } from './auth/auth.module';
@@ -22,13 +21,12 @@ import { Category } from './categories/entities/category.entity';
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
-        type: 'sqlite',
-        database: config.get<string>('DATABASE_NAME'),
+        type: 'postgres',
+        url: config.get<string>('DATABASE_URL'),
         synchronize: true,
         entities: [User, Event, Category],
       }),
     }),
-    UsersModule,
     AuthModule,
     EventsModule,
     CategoriesModule,

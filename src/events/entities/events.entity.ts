@@ -8,6 +8,7 @@ import {
 } from 'typeorm';
 
 import { Category } from '../../categories/entities/category.entity';
+import { User } from '../../users/entities/users.entity';
 
 export enum EventType {
   ONLINE = 'Online',
@@ -33,6 +34,9 @@ export class Event {
 
   @ManyToOne(() => Category, (category) => category.events)
   category: Category;
+
+  @ManyToOne(() => User, (user) => user.events)
+  admin: User;
 
   @Column({
     default: 0,

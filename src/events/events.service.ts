@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, Repository } from 'typeorm';
 
 import { Event } from './entities/events.entity';
+import { User } from '../users/entities/users.entity';
 
 import { CreateEventDto } from './dto/create-events.dto';
 
@@ -10,8 +11,11 @@ import { CreateEventDto } from './dto/create-events.dto';
 export class EventsService {
   constructor(@InjectRepository(Event) private repo: Repository<Event>) {}
 
-  async create(data: CreateEventDto): Promise<CreateEventDto> {
-    const event = await this.repo.create(data);
+  async create(data: CreateEventDto, admin: User): Promise<CreateEventDto> {
+    const event = await this.repo.create({
+      ...data,
+      admin,
+    });
 
     return this.repo.save(event);
   }

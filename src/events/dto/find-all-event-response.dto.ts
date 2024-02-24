@@ -1,6 +1,6 @@
 import { Expose } from 'class-transformer';
 
-export class FindAllEventsDto {
+export class EventDto {
   @Expose()
   id: string;
 
